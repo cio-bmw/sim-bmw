@@ -1,0 +1,790 @@
+<?
+/*
+$var = getVariables();
+$announcements_limit = $var['announcements_limit'];    // number of announcements to display on the main page.
+$users_limit = $var['people_per_page'];                // number of supporters/contacts to list per page
+$groups_limit = $var['sets_per_page'];                // number of groups/companies to list per page
+$tickets_limit = $var['tickets_per_page'];            // number of tickets to list per page
+$helpdesk_name = $var['name'];                        // name of the helpdesk
+$admin_email = $var['admin_email'];                    // email address of the helpdesk administrator
+$enable_stats = $var['stats'];                        // processed time statistics on or off
+$enable_smtp = $var['smtp'];                        // smtp server on or off variable
+$sendmail_path = $var['sendmail_path'];                // path to sendmail on a *nix machine
+$enable_helpdesk = $var['on_off'];                    // helpdesk on or off variable
+$on_off_reason = $var['reason'];                    // reason for helpdesk being off
+$enable_whosonline = $var['whosonline'];            // enable whos online display
+$enable_products = $var['products_status'];            // enable products option
+$enable_time_tracking = $var['time_tracking'];        // enable time tracking per ticket/supporter
+$default_theme = $var['default_theme'];                // the name of the default theme that is set by the admin
+$enable_automatic = $var['automatic_notification'];    // whether supporters should be notified bny email
+$delimiter = "--//--";                                // this is the string that is inserted after the user name
+                                                    // and again after the message in the update log.  This can't
+/***********************************************************************************************************
+**    function getVariables():
+************************************************************************************************************/
+/*function getVariables() {
+//    global $mysql_settings_table;
+    $sql = "select * from $mysql_settings_table";
+    $result = execsql($sql);
+    $row = mysql_fetch_array($result);
+    return $row;
+}
+
+/***********************************************************************************************************
+**    function isEmpty():
+************************************************************************************************************/
+function isEmpty($table) {
+    $sql = "select * from $table";
+    $result = execsql($sql);
+    $num_rows = mysql_num_rows($result);
+
+    if($num_rows > 0) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+
+/***********************************************************************************************************
+**    function execsql():
+************************************************************************************************************/
+function execsql($query) {
+    global $mysql_user, $mysql_pwd, $mysql_db, $mysql_host, $queries, $debug;
+    $connection = mysql_connect($mysql_host, $mysql_user, $mysql_pwd);
+    mysql_select_db($mysql_db);
+    if($debug == 1) {
+        echo $query . "<br>";
+    }
+    if(!$result = mysql_query($query, $connection)) {
+        echo mysql_errno() . " " . mysql_error();
+        exit;
+    }
+    return $result;
+}
+
+/***********************************************************************************************************
+**    function outputURL():
+************************************************************************************************************/
+function outputURL($link, $name, $class=false) {
+    if($class) {
+        $class = " class=$class";
+    } else {
+        $class = "";
+    }
+    return "<a$class href=index.php?op=$link>$name</a>";
+}
+
+
+/***********************************************************************************************************
+**    function outputInputFormTable():
+************************************************************************************************************/
+function formentry($action, $title, &$rows, &$buttons, $hidden=false) {
+    $rows = array_reverse($rows);
+    $buttons = array_reverse($buttons);
+    echo '
+    <table class=border cellSpacing=0 cellPadding=0 width="100%" align=center border=0><tr><td>
+    <form action='.$action.' method=post>
+        <table class=border cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
+            <tr>
+                <td>
+                    <table cellSpacing=1 cellPadding=2 width="100%" border=0>
+                        <tr height=25>
+                            <td class=formtitle align=middle>
+                                <b>'.$title.'</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class=form>
+                                <table class=border cellSpacing=0 cellPadding=0 width=100% align=center border=0>
+                                    <tr>
+                                        <td>
+                                            <table cellSpacing=1 cellPadding=2 width="100%" border=0>';
+    while(!is_null($row = array_pop($rows))) {
+        $type = $row[0];
+        $label = $row[1];
+        echo '
+                                                <tr>
+                                                    <td class=form align=right width=20%>
+                                                        <b> '.$label.': </b>
+                                                    </td>';
+        if($type == 'text') {
+            $name = $row[2];
+            echo '
+                                                    <td class=back>
+                                                        <input type=text size=50 name='.$name.'>
+                                                    </td>
+                                                </tr>';
+        }
+        if($type == 'password') {
+            $name = $row[2];
+            echo '
+                                                    <td class=back>
+                                                        <input type=password name='.$name.'>
+                                                    </td>
+                                                </tr>';
+        }
+        if($type == 'checkbox') {
+            $numcolumns = $row[3];
+            $width = 100/$numcolumns;
+            $checkboxes = $row[2];
+            $checkboxes = array_reverse($checkboxes);
+            echo '
+                                                    <td class=back>
+                                                        <table class=border cellSpacing=1 cellPadding=2 width="100%" border=0>';
+            $i = 0;
+            while(!is_null($checkbox = array_pop($checkboxes))) {
+                $i++;
+                $name = $checkbox[0];
+                $value = $checkbox[1];
+                $display = $checkbox[2];
+                if($i%$numcolumns == 1) {
+                    echo '<tr>';
+                }
+                echo '<td class=form width='.$width.'%><input class=box type=checkbox name='.$name.' value='.$value.'>&nbsp;&nbsp;<b>'.$display.'</b></td>';
+                if($i%$numcolumns == 0) {
+                    echo '</tr>';
+                }
+            }
+            $i++;
+            if($i%$numcolumns != 1) {
+                while($i%$numcolumns != 1) {
+                    echo '<td class=back>&nbsp;</td>';
+                    $i++;
+                }
+                echo '</tr>';
+            }
+            echo '
+                                                        </table>
+                                                    </td>
+                                                </tr>';
+        }
+        if($type == 'textarea') {
+            $name = $row[2];
+            echo '
+                                                    <td class=back>
+                                                        <textarea name='.$name.' rows=3 cols=56></textarea>
+                                                    </td>
+                                                </tr>';
+        }
+        if($type == 'select') {
+            $name = $row[2];
+            $ddmenu = $row[3];
+            $ddmenu = array_reverse($ddmenu);
+            echo '
+                                                    <td class=back>
+                                                        <select name='.$name.'>';
+            while(!is_null($option = array_pop($ddmenu))) {
+                $value = $option[0];
+                $display = $option[1];
+                echo '
+
+                                                            <option value='.$value.'>'.$display.'</option>';
+            }
+            echo '
+                                                        </select>
+                                                    </td>
+                                                </tr>';
+        }
+    }
+    echo '
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <center>';
+    while(!is_null($button = array_pop($buttons))) {
+        $type = $button[0];
+        $label = $button[1];
+        $name = $button[2];
+        echo '    
+            <input type='.$type.' name='.$name.' value="'.$label.'">';
+    }
+    if($hidden) {
+        while(!is_null($hide = array_pop($hidden))) {
+            $value = $hide[1];
+            $name = $hide[0];
+            echo '
+                <input type=hidden name='.$name.' value="'.$value.'">';
+        }
+    }
+    echo '
+        </center>
+    </form><br></td></tr></table>';
+}
+
+/***********************************
+//FORM EDIT
+************************************/
+
+function formedit($action, $title, &$rows, &$buttons, $hidden=false) {
+    $rows = array_reverse($rows);
+    $buttons = array_reverse($buttons);
+    echo '
+    <form action='.$action.' method=post>
+        <table class=border1 cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
+            <tr>
+                <td>
+                    <table cellSpacing=1 cellPadding=0 width="100%" border=0>
+                        <tr height=25>
+                            <td class=info align=middle>
+                                <b>'.$title.'</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class=back>
+                                <table class=border1 cellSpacing=0 cellPadding=0 width=100% align=center border=0>
+                                    <tr>
+                                        <td>
+                                            <table cellSpacing=1 cellPadding=2 width="100%" border=0>';
+    while(!is_null($row = array_pop($rows))) {
+        $type = $row[0];
+        $label = $row[1];
+        $value = $row[2];
+        echo '
+                                                <tr height=25>
+                                                    <td class=prompt align=right width=20%>
+                                                        <b> '.$label.': </b>
+                                                    </td>';
+        if($type == 'text') {
+            $name = $row[2];
+            $value = $row[3];
+            echo '
+                                                    <td class=back>
+                                                        <input type=text size=40 name="'.$name.'" value="'.$value.'">
+                                                    </td>
+                                                </tr>';
+        }
+        if($type == 'password') {
+            $name = $row[2];
+            echo '
+                                                    <td class=back>
+                                                        <input type=password name='.$name.'>
+                                                    </td>
+                                                </tr>';
+        }
+        if($type == 'checkbox') {
+            $numcolumns = $row[3];
+            $width = 100/$numcolumns;
+            $checkboxes = $row[2];
+            $checkboxes = array_reverse($checkboxes);
+            echo '
+                                                    <td class=back>
+                                                        <table class=border cellSpacing=1 cellPadding=2 width="100%" border=0>';
+            $i = 0;
+            while(!is_null($checkbox = array_pop($checkboxes))) {
+                $i++;
+                $name = $checkbox[0];
+                $value = $checkbox[1];
+                $display = $checkbox[2];
+                if($i%$numcolumns == 1) {
+                    echo '<tr>';
+                }
+                echo '<td class=back3 width='.$width.'%><input class=box type=checkbox name='.$name.' value='.$value.'>&nbsp;&nbsp;<b>'.$display.'</b></td>';
+                if($i%$numcolumns == 0) {
+                    echo '</tr>';
+                }
+            }
+            $i++;
+            if($i%$numcolumns != 1) {
+                while($i%$numcolumns != 1) {
+                    echo '<td class=back>&nbsp;</td>';
+                    $i++;
+                }
+                echo '</tr>';
+            }
+            echo '
+                                                        </table>
+                                                    </td>
+                                                </tr>';
+        }
+        if($type == 'textarea') {
+            $name = $row[2];
+            echo '
+                                                    <td class=back>
+                                                        <textarea name='.$name.' rows=3 cols=72></textarea>
+                                                    </td>
+                                                </tr>';
+        }
+        if($type == 'select') {
+            $name = $row[2];
+            $ddmenu = $row[3];
+            $ddmenu = array_reverse($ddmenu);
+            echo '
+                                                    <td class=back>
+                                                        <select name='.$name.'>';
+            while(!is_null($option = array_pop($ddmenu))) {
+                $value = $option[0];
+                $display = $option[1];
+                echo '
+
+                                                            <option value='.$value.'>'.$display.'</option>';
+            }
+            echo '
+                                                        </select>
+                                                    </td>
+                                                </tr>';
+        }
+    }
+    echo '
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <center>';
+    while(!is_null($button = array_pop($buttons))) {
+        $type = $button[0];
+        $label = $button[1];
+        $name = $button[2];
+        echo '    
+            <input type='.$type.' name='.$name.' value="'.$label.'">';
+    }
+    if($hidden) {
+        while(!is_null($hide = array_pop($hidden))) {
+            $value = $hide[1];
+            $name = $hide[0];
+            echo '
+                <input type=hidden name='.$name.' value="'.$value.'">';
+        }
+    }
+    echo '
+        </center>
+    </form>';
+}
+
+
+/***********************************************************************************************************
+**    function printError():
+**        Takes a string as input.  Outputs the error message in a nice table format.
+************************************************************************************************************/
+function printError($error) {
+    echo '
+        <table class=border cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
+            <tr>
+                <td>
+                    <table cellSpacing=1 cellPadding=2 width="100%" border=0>
+                        <tr>
+                            <td class=info align=middle><b>Error</b></td>
+                        </tr>
+                        <tr>
+                            <td class=error align=middle>
+                                <b><font color=red>'. $error . '</font></b><br>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>';
+}
+
+/***********************************************************************************************************
+**    function printSuccess():
+**        Takes a string as input.  Outputs the message in a nice table format.
+************************************************************************************************************/
+function printSuccess($msg) {
+    // [15/12/2003 seh]
+    global $lang;
+    // [/seh]
+    echo '
+        <table class=border cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
+            <tr>
+                <td>
+                    <table cellSpacing=1 cellPadding=2 width="100%" border=0>
+                        <tr>
+                            <td class=info align=middle><b>'.$lang['success'].'</b></td>
+                        </tr>
+                        <tr>
+                            <td class=error align=middle>
+                                <b><font color=green>'. $msg . '</font></b><br>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>';
+}
+
+/***********************************************************************************************************
+**    function validEmail():
+************************************************************************************************************/
+function validEmail($address) {
+    if (ereg('^[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+'. '@'. '[-!#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+\.' . '[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+$', $address))
+        return true;
+    else
+        return false;
+}
+
+/***********************************************************************************************************
+**    function checkPassword():
+************************************************************************************************************/
+function checkPwd($pwd1, $pwd2) {
+    if($pwd1 == $pwd2)
+        return true;
+    else
+        return false;
+}
+
+/***********************************************************************************************************
+**    function personExists():
+************************************************************************************************************/
+function userExists($name) {
+    global $mysql_users_table;
+    $sql = "select user_name from $mysql_users_table where user_name='$name'";
+    $result = execsql($sql);
+    $num_rows = mysql_num_rows($result);
+    if($num_rows != 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+
+
+//function get image filename
+function getimagefilename($id) {
+$sql = "select * from banner where id=$id";
+    $result = execsql($sql);
+    $row = mysql_fetch_array($result);
+    return $row;
+}
+
+function displayimage($image_path,$image_name,$img_width,$img_height) {
+echo'<table><tr><td><img src='.$image_path.'/'.$image_name.' width='.$img_width.' height='.$img_height.'></td></tr></table>';
+}
+
+function thumbnail($image_path,$thumb_path,$image_name,$thumb_width,$thumb_height) {
+           $ext = strtolower(end(explode('.', "$image_path/$image_name")));
+             if ($ext == 'jpg' || $ext == 'jpeg') {
+               $src_img = @imagecreatefromjpeg("$image_path/$image_name");
+               } else if ($ext == 'png') {
+                  $src_img = @imagecreatefrompng("$image_path/$image_name");
+                  # Only if your version of GD includes GIF support
+                  } else if ($ext == 'gif') {
+                  $src_img = @imagecreatefromgif("$image_path/$image_name");
+              }
+              $origw=imagesx($src_img);
+              $origh=imagesy($src_img); 
+
+              $scale = min($thumb_width/$origw,$thumb_height/$origh);
+              if ($scale <1) {
+                    $new_w= floor($scale*$origw);
+                    $new_h = floor($scale*$origh);
+                 } else {
+                   $new_w=$origw;
+                   $new_h=$origh;
+              }
+
+              $dst_img = imagecreatetruecolor($new_w,$new_h);
+              imagecopyresized($dst_img,$src_img,0,0,0,0,$new_w,$new_h,imagesx($src_img),imagesy($src_img)); 
+
+              imagejpeg($dst_img, "$thumb_path/$image_name"); 
+              return true; 
+}
+
+/***********************************************************************************************************
+**	function outputSimpleTable():
+************************************************************************************************************/
+function outputSimpleTable($title, &$headrow, &$rows, &$align, $message=false) {
+	$numcolumns = count($headrow);
+	// reverse rows
+	$rows = array_reverse($rows);
+	$messagerow = "";
+	if($message) {
+		$messagerow = "<tr><td class=cat align=left>$message</td></tr>";
+	}
+	echo '
+	<table class=border cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
+		<tr>
+			<td>
+				<table cellSpacing=1 cellPadding=5 width="100%" border=0>
+					<tr>
+						<td class=info align=middle><b>'.$title.'</b></td>
+					</tr>
+					'.$messagerow.'
+					<tr>
+						<td class=back>
+							<table class=border cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
+								<tr>
+									<td>
+										<table cellSpacing=1 cellPadding=5 width="100%" border=0>
+											<tr>';
+	for($j = 0; $j < $numcolumns; $j++) {
+		echo '<td class=cat align=center><b>'.$headrow[$j].'</b></td>';
+	}
+	echo '</tr>';
+	while(!is_null($row = array_pop($rows))) {
+		echo '<tr>';
+		$class = "back2";
+		for($j = 0; $j < $numcolumns; $j++) {
+			echo '
+			<td class='.$class.' align='.$align[$j].'>'.$row[$j].'</td>';
+			if($class == "back") {
+				$class = "back2";
+			} else {
+				$class = "back";
+			}
+		}
+		echo '</tr>';
+	}
+	echo '
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table><br>';
+}
+
+/***********************************************************************************************************
+**	function outputFrameTable():
+************************************************************************************************************/
+function outputFrameTable($title, &$innertable, $innertype='detail') {
+	echo '
+	<table class=border cellSpacing=0 cellPadding=0 width=100% align=center border=0>
+		<tr>
+			<td>
+				<table cellSpacing=1 cellPadding=5 width=100% border=0>
+					<tr>
+						<td class=info align=middle><b>'.$title.'</b></td>
+					</tr>
+					<tr>
+						<td class=back>';
+						outputDisplayTable($innertable, $innertype); echo '
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>';
+}
+
+/***********************************************************************************************************
+**	function outputDisplayTable():
+************************************************************************************************************/
+function outputDisplayTable(&$rows, $type='detail') {
+	// reverse rows
+	$rows = array_reverse($rows);
+	$row = array_pop($rows);
+	$headleft = $row[0];
+	$headright = $row[1];
+	if($type == 'faq') {
+		$alignleft = "center";
+		$alignright = "center";
+		$headright = "<b>$headright</b>";
+	} else {
+		$alignleft = "left";
+		$alignright = "right";
+	}
+	echo '
+	<table cellSpacing=0 cellPadding=0 width=100% align=center border=0>
+		<tr>
+			<td>
+				<table class=border cellSpacing=1 cellPadding=5 width=100% border=0>
+					<tr>
+						<td width=20% class=info align='.$alignleft.' align=middle><b>'.$headleft.'</b></td>
+						<td class=info align='.$alignright.' align=middle>'.$headright.'</td>
+					</tr>';
+	while(!is_null($row = array_pop($rows))) {
+		echo '
+					<tr>
+						<td width=20% class=back2 align=right>'.$row[0].':</td>
+						<td class=back>'.$row[1].'</td>
+					</tr>';
+	}
+	echo '
+				</table>
+			</td>
+		</tr>
+	</table>';
+}
+
+/***********************************************************************************************************
+**	function outputSortByFormTable():
+************************************************************************************************************/
+function outputSortByFormTable($actionlink, $label, &$ddmenu, &$innertables) {
+	$ddmenu = array_reverse($ddmenu);
+	$tables = array_reverse($innertables);
+	$row = array_pop($ddmenu);
+	$name = $row[0];
+	$value = $row[1];
+	echo '
+	<form action=index.php?t='.$actionlink.' method=post>
+		<table class=border cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
+			<tr>
+				<td>
+					<table cellSpacing=1 cellPadding=5 width="100%" border=0>
+						<tr>
+							<td class=info align=right>
+								<b>'.$label.':
+									<select name='.$name.' onChange="submit()">';
+	while(!is_null($row = array_pop($ddmenu))) {
+		$selected = "";
+		if($value == $row[0]) $selected = " selected";
+		echo "<option value=$row[0]$selected>$row[1]</option>";
+	}
+	echo '
+									</select>
+								</b>
+							</td>
+						</tr>
+						<tr>
+							<td class=back>';
+	while(!is_null($table = array_pop($tables))) {
+		outputDisplayTable($table);
+		if(count($tables) > 0) echo '<br>';
+	}
+	echo '
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</form>';
+}
+
+function datagrid_output($title, &$width, &$headrow, &$rows, &$align, $message=false) {
+    $numcolumns = count($headrow);
+    // reverse rows
+    $rows = array_reverse($rows);
+    $messagerow = "";
+    if($message) {
+        $messagerow = "<tr><td class=cat align=left>$message</td></tr>";
+    }
+    echo '
+    <table class=border cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
+        <tr>
+            <td>
+                <table cellSpacing=1 cellPadding=0 width="100%" border=0>
+                    <tr height=25>
+                        <td class=formtitle align=middle><b>'.$title.'</b></td>
+                    </tr>
+                    '.$messagerow.'
+                    <tr>
+                        <td class=back>
+                            <table class=border cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
+                                <tr>
+                                    <td>
+                                        <table cellSpacing=1 cellPadding=3 width="100%" border=0>
+                                            <tr>';
+    for($j = 0; $j < $numcolumns; $j++) {
+        echo '<td class=headrow width=%'.$width[$j].'% align=center><b>'.$headrow[$j].'</b></td>';
+    }
+    echo '</tr>';
+    $class = "rows1";
+    while(!is_null($row = array_pop($rows))) {
+        echo '<tr>';
+        for($j = 0; $j < $numcolumns; $j++) {
+            echo '
+            <td class='.$class.' align='.$align[$j].'>'.$row[$j].'</td>';
+        }
+
+            
+        echo '</tr>';
+            if($class == "rows1") {
+                $class = "rows2";
+            } else {
+                $class = "rows1";
+            }
+    }
+    echo '
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table><br>';
+}
+
+/***********************************************************************************************************
+**    function outputNavigationLink():
+************************************************************************************************************/
+function outputNavigationLink($offset, $maxoffset, $limit, $link, $midlink=false) {
+    global $lang;
+    $navlink = "";
+    $offset = $offset - $limit;
+    if($offset + $limit == 0) {
+        $navlink .= $lang['previous'];
+    } else if($offset < 0) {
+        $offsetval = 0;
+        $navlink .= "<a href=index.php?op=$link$offsetval>Sebelumnya</a>";
+    } else {
+        $offsetval = $offset;
+        $navlink .= "<a href=index.php?op=$link$offsetval>Sebelumnya</a>";
+    }
+    $navlink .= "&nbsp; |&nbsp;";
+    if($midlink != false) {
+        $alphabet = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+        for($k = 0; $k < 26; $k++) {
+            $navlink .= " <a href=index.php?op=$midlink$alphabet[$k]>$alphabet[$k]</a>";
+        }
+        $navlink .= "&nbsp; |&nbsp;";
+    }
+    $offset = $offset + $limit + $limit;
+    if($offset < $maxoffset) {
+        $offsetval = $offset;
+        $navlink .= " <a href=index.php?op=$link$offsetval>Next</a>";
+    } else {
+        $navlink .= "Next";
+    }
+    echo "<center>$navlink</center>";
+}
+
+
+
+
+function createGroupMenu($group) {
+	global $mysql_groups_table;
+	$sql = "select group_id, group_name from $mysql_groups_table";
+	$result = execsql($sql, $mysql_tpriorities_table);
+	if(!isset($group) || $group == '')
+		echo "<option></option>";
+	while($row = mysql_fetch_row($result)) {
+		echo "<option value=\"$row[0]\" ";
+			if($group == $row[0]) echo "selected";
+			echo "> $row[1] </option>";
+	}
+}
+
+
+
+function footer() {
+echo '
+<table width=100%><tr height=100><td bgcolor=880f0f align=center>
+<font face=tahoma color=ffffff size=5><strong>
+Swaloh Resort & Spa</font><br>
+<font size=3 color=FCFCDB>
+desa Wonorejo - Kecamatan Pagerwojo - Kabupaten TULUNGAGUNG
+</font><br>
+<font size=2 color=fcfcdb>
+Phone (0355) 888987878
+</font>
+</td></tr></table>';
+}
+?>
+
+

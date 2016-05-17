@@ -1,0 +1,12 @@
+<?php
+$locationdata = $dirdata.'location/';
+$locationthumbnail = $dirdata.'location/thumbnail/';
+$locationview = $rootdata.'location/';
+$locationviewthumbnail = $rootdata.'location/thumbnail/';
+
+$mysql_location_table = "location";
+
+?>
+
+
+

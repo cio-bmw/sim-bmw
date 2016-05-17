@@ -1,0 +1,191 @@
+ <script type="text/javascript">  
+ 
+// fungsi ini untuk menampilkan list data pelanggan sesuai halaman (page) yang dipilih. 
+// list data yang ditampilkan disesuaikan juga dengan input data pada bagian search. 
+function pagination(page){ 
+ var cari = $("input#fieldcari").val(); 
+ var id = $("input#idslshdr").val(); 
+ 
+ dataString = 'starting='+page+'&id='+id+'&cari='+cari+'&random='+Math.random(); 
+      
+  $.ajax({ 
+    url:"slsdtlsektor_dspproduct.php", 
+    data: dataString, 
+		type:"GET", 
+		success:function(data) 
+		{ 
+			$('#divLOV').html(data); 
+		} 
+  }); 
+} 
+ 
+// fungsi untuk me-load tampilan list data pelanggan, data yang ditampilkan disesuaikan 
+// juga dengan input data pada bagian search 
+function loadData(){ 
+  var dataString; 
+  var cari = $("input#fieldcari").val(); 
+   var id = $("input#idslshdr").val(); 
+  dataString = 'id='+id+'&cari='+ cari; 
+    
+  $.ajax({ 
+    url: "product_display.php", //file tempat pemrosesan permintaan (request) 
+    type: "GET", 
+    data: dataString, 
+		success:function(data) 
+		{ 
+			$('#divPageData').html(data); 
+		} 
+  }); 
+} 
+
+function getParameterByName( name,href )
+{
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( href );
+  if( results == null )
+    return "";
+  else
+    return decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+
+   
+$(function(){  
+  // membuat warna tampilan baris data pada tabel menjadi selang-seling 
+  $('#product tr:even:not(#nav):not(#total)').addClass('even'); 
+  $('#product tr:odd:not(#nav):not(#total)').addClass('odd'); 
+   
+	$("a.edit").click(function(){ 
+		page=$(this).attr("href"); 
+		$("#divPageData").load(page); // me-load formpelanggan untuk melakukan edit data 
+		$("#divPageData").show(); 
+		$("#btnhide").show(); 
+		return false; 
+	}); 
+	
+	$("a.pilih").click(function(){ 
+		page=$(this).attr("href"); 
+		$("#divPageEntry").load(page); // me-load formpelanggan untuk melakukan edit data 
+		$("#divPageEntry").show(); 
+		$("#btnhide").show(); 
+		
+  //  alert(getParameterByName("product",page));
+  // var elem = document.getElementById("check_fisik");
+  //  elem.value = getParameterByName("product",page);    
+    
+    return false; 
+		
+		
+	}); 
+	
+
+	
+	
+	 
+	$("a.delete").click(function(){ 
+		el=$(this); 
+		if(confirm("Apakah benar akan menghapus data product ini?")) 
+		{ 
+			$.ajax({ 
+				url:$(this).attr("href"),  
+				type:"GET", 
+				dataType: 'json', //respon yang diminta dalam format JSON 
+				success:function(response) 
+				{ 
+					if(response.status == 1){ 
+						loadData(); 
+						$("#divFormContent").load("product_form.php"); 
+						$("#divFormContent").hide(); 
+            $("#btnhide").hide(); 
+            alert("Data product berhasil di hapus!"); 
+					} 
+					else{ 
+						alert("data product gagal di hapus!"); 
+					} 
+				} 
+			}); 
+		} 
+		return false; 
+	}); 
+
+$("#btncloseobat").click(function(){ 
+	  	page="slsdtlsektor_display.php?id="+$("input#idrjhdrs").val();
+		$("#divPageData").load(page); 
+		$("#divPageData").show(); 
+		$("#divLOV").hide();
+		$("#btnhide").show(); 
+		$("#divPageEntry").hide();
+		
+		return false; 
+	}); 
+$("#btncari").click(function(){ 
+	  	page="slsdtlsektor_dspproduct.php?id="+$("input#idslshdr").val()+"&cari="+$("input#fieldcari").val();
+		$("#divLOV").load(page); 
+		$("#divLOV").show(); 
+		$("#btnhide").show(); 
+		return false; 
+	}); 
+
+	 
+}); 
+ 
+</script> 
+ 
+
+<?php 
+// memanfaatkan class pagination dari Reneesh T.K 
+include_once('config.php'); 
+include_once('pagination_class.php'); 
+$id = $_GET['id'];  
+$cari = $_GET['cari'];
+$sql = "select * from product where productname like '%".$cari."%'";  
+ 
+if(isset($_GET['starting'])){ //starting page 
+	$starting=$_GET['starting']; 
+}else{ 
+	$starting=0; 
+} 
+ 
+$recpage = 15;//jumlah data yang ditampilkan per page(halaman) 
+$obj = new pagination_class($sql,$starting,$recpage);		 
+$result = $obj->result; 
+?> 
+<form method="post" name="dspobat" action="" id="dspobat">
+<table width="480px"> 
+<tr><td colspan=5 >
+Cari Nama Obat : <input size=10 type="text" name="fieldcari" id="fieldcari" value="<? echo $cari; ?>" /> 
+<input type="button" class="button" id="btncari" value="Tampilkan" />
+<input type="hidden" name="id" value=<? echo $id; ?>
+</td></tr>  
+  <tr> 
+ <th>Kode</th>
+<th>Nama Obat</th>
+<th>Harga Jual</th>
+<th>Stock</th>
+<th>Aksi</th> 
+  </tr> 
+		<?php 
+		//menampilkan data pelanggan 
+		if(mysql_num_rows($result)!=0){ 
+  		while($row = mysql_fetch_array($result)){ ?>		 
+       <tr> 
+ <td ><? echo $row['idproduct'];?></td>
+<td><? echo $row['productname'];?></td>
+<td class="right"><? echo nf($row['salesprice']);?></td>
+<td  class="right"><? echo nf($row['stock']);?></td>
+ 
+<td><a href="slsdtlsektor_form.php?action=addproduct&product=<? echo $row['idproduct'];?>&price=<? echo $row['salesprice'];?>&idhdr=<? echo $id; ?>" class="pilih">Pilih</a></td></tr> 
+
+  		<?} //end while ?> 
+		 
+     
+      <tr id="nav"><td colspan="5"><?php echo $obj->anchors; ?></td></tr> 
+	   <tr id="total"><td colspan="5"><?php echo $obj->total; ?></td></tr> 
+    <?}else{?> 
+   <tr><td align="center" colspan="5">Data tidak ditemukan!</td></tr> 
+    <?}?> 
+	</table> 
+
+	</form>

@@ -1,0 +1,13 @@
+<?php
+$singledata = $dirdata.'single/';
+$singlethumbnail = $dirdata.'single/thumbnail/';
+$singleview = $rootdata.'single/';
+$singleviewthumbnail = $rootdata.'single/thumbnail/';
+
+$mysql_single_table = "single";
+$mysql_single_thumbnail_table = "single_thumbnail";
+
+?>
+
+
+

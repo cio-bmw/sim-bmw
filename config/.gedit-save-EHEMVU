@@ -1,0 +1,158 @@
+<?php
+/*******************************************************************************
+**    file:    style.php
+********************************************************************************
+**    author:    Luis Bernardo
+**    date:    2003/12/10
+********************************************************************************
+**    $Revision: 1.2 $ on $Date: 2003/12/13 04:19:38 $ by $Author: lmpmbernardo $
+*******************************************************************************/
+
+/*
+move from body
+//        scrollbar-face-color: #6974B5;
+//        scrollbar-shadow-color: #000099;
+//        scrollbar-highlight-color: #6974B5;
+//        scrollbar-3dlight-color: #000099;
+//        scrollbar-darkshadow-color: #6974B5;
+//        scrollbar-track-color: #FFFFFF;
+//        scrollbar-arrow-color: #FFFFFF
+*/
+?>
+<style type="text/css">
+<!--
+    .body {
+        background-color: #ffffff;
+    }
+    a:link {text-decoration: none; font-weight: ; font-family: Verdana; font-size: 10; color: #000080;}
+    a:visited {text-decoration: none; font-weight:; font-family: Verdana; font-size: 10;color: #000080;}
+    a:active {text-decoration: none; font-weight:; font-family: Verdana; font-size: 10;color: #000080;}
+    a:hover {text-decoration: none; font-weight: ; font-family: Verdana; font-size: 10;color: #FD7A05;}
+    table.border {background-color: #000000;}
+    td {color: #000000; font-family: Verdana; font-size: 11;}
+    tr {color: #000000; font-family: Verdana; font-size: 11;}
+    td.back {background-color: #ffffff;}
+    td.back2 {background-color: #cfcfcf;}
+    td.back3 {background-color: #cfcfcf;}
+    td.headrow {
+     	background-color: #000000;
+     	color : #ffff00;
+	font-family: Verdana;
+	font-weight:strong; 
+	font-size: 11; 
+    }
+    td.rows2 {background-color: #cfcfcf;}
+    td.rows1 {background-color: #ffffff;}
+
+    td.isi {
+	background-color: ; 
+	font-family: Verdana;
+	font-weight:strong; 
+	font-size: 11; 
+	color:#000000; 
+	padding-top:;
+	padding-right:15px;
+	padding-bottom:;
+	padding-left:15px;
+        text-align:justify;
+        }
+
+td.judulisi {
+	background-color: ; 
+	font-family: Verdana;
+	font-weight:Bold; 
+	font-size: 14; 
+	color:#000000; 
+	padding-top:;
+	padding-right:15px;
+	padding-bottom:;
+	padding-left:15px;
+        text-align:justify;
+        }
+
+tr.menu {
+height:20;
+}     
+td.menu {
+	background-color:#000000; 
+	font-family: Verdana;
+	font-weight:strong; 
+	font-size: 11; 
+	color: #ec722f; 
+	padding-left:20px;
+	padding-right:20px;
+	spacing :1;
+	}
+td.menu2 {
+	background-color:#ffffff; 
+	font-family: Verdana;
+	font-weight:strong; 
+	font-size: 11; 
+	color: #ec722f; 
+	padding-left:5px;
+	padding-right:5px;
+	spacing :1;
+	}
+
+tr.ftitle{
+height:25;
+}     
+td.ftitle {
+	background-color:#000000; 
+	font-family: Verdana;
+	font-weight:strong; 
+	font-size: 11; 
+	color: #FFFFFF; 
+	padding-left:20px;
+	padding-right:20px;
+	spacing :1;
+        text-align:center;
+	}
+
+td.form {
+	background-color:#000000; 
+	font-family: Verdana;
+	font-weight:strong; 
+	font-size: 11; 
+	color: #ffffff; 
+	padding-left:20px;
+	padding-right:20px;
+	spacing :1;
+	}
+
+td.formtitle {
+	background-color:#cfcfcf; 
+	font-family: Verdana;
+	font-weight:strong; 
+	font-size: 11; 
+	color: #0000CC; 
+	padding-left:20px;
+	padding-right:20px;
+	spacing :1;
+	}
+
+
+
+    a.menu:link {text-decoration: ; font-weight: bold; font-family: Verdana; font-size: 10; color: #ffffff; padding-left: 20 px;}
+    a.menu:visited {text-decoration:; font-weight: bold; font-family: Verdana; font-size: 10; color: #ffffff;}
+    a.menu:active {text-decoration: ; font-weight: bold; font-family: Verdana; font-size: 10; color: #ffffff;}
+    a.menu:hover {text-decoration: ; font-weight: bold; font-family: Tahoma; font-size: 12; color: #FB061D;}
+
+    a.submenu:link {text-decoration: ; background-color: #000000; font-weight: bold; font-family: Verdana; font-size: 10; color: #ffffff;}
+    a.submenu:visited {text-decoration:; background-color: #000000;font-weight: bold; font-family: Verdana; font-size: 10; color: #ffffff;}
+    a.submenu:active {text-decoration: ; background-color: #000000;font-weight: bold; font-family: Verdana; font-size: 10; color: #ffffff;}
+    a.submenu:hover {text-decoration:; background-color: #CC0000;font-weight: bold; font-family: Verdana; font-size: 10; color: #ffffff;}
+
+
+
+  
+    input, select {border: 1px solid #000099; font-family: Verdana, arial, helvetica, sans-serif; font-size: 11px; font-weight: bold; background-color: #ffffff; color: #000000;}
+    textarea, select {border: 1px solid #000099; font-family: Verdana, arial, helvetica, sans-serif; font-size: 11px; background-color: #ffffff; color: #000000;}
+    input.box {border: 0px;}
+    table.border2 {background-color: #cfcfcf;}
+    td.head    {background-color:#6974b5; color: #ffffff; font-family: Arial, Helvetica, sans-serif; font-size: 12px;}
+-->
+</style>
+
+
+

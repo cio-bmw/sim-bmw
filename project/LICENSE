@@ -1,0 +1,34 @@
+All files in this work are now covered by the following copyright notice.
+Please note that included libraries in the lib directory may have their own license.
+
+Copyright (c) 2007-2014 The web2Project Development Team <w2p-developers@web2project.net>
+Copyright (c) 2003-2005 The dotProject Development Team <core-developers@dotproject.net>
+
+    This file is part of web2Project.
+
+    web2Project is free software; you can redistribute it and/or modify
+    it under the terms of the Clear BSD License as published by MetaCarta.
+
+    web2Project is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    Clear BSD License for more details.
+
+    All modifications to dotproject after the BSD->GPL v2.0 license change
+    (March 2005) and before the web2project fork (November 2007) have been either:
+
+        a) relicensed to the Clear BSD by their original contributor; OR
+        b) removed and therefore no longer exist within web2project.
+
+    The full text of the Clear BSD License is in the COPYING file.
+
+Icons
+-------------------------------------------------------------------------------
+icons included with web2Project have been sourced from GNU GPL products:
+Cezanne
+Crystal
+CrystalClear
+CrystalOSX
+NuoveXT1.6
+Tango
+VistaInspirate

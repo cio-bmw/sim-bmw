@@ -1,0 +1,14 @@
+<?php
+$infodata = $dirdata.'info/';
+$infothumbnail = $dirdata.'info/thumbnail/';
+$infoview = $rootdata.'info/';
+$infoviewthumbnail = $rootdata.'info/thumbnail/';
+
+$mysql_info_header_table = "info_header";
+$mysql_info_detail_table = "info_detail";
+$mysql_info_thumbnail_table = "info_thumbnail";
+
+
+?>
+
+

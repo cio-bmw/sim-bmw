@@ -1,0 +1,16 @@
+<?php
+$newsdata = $dirdata.'news\\';
+$newsthumbnail = $dirdata.'news\\thumbnail\\';
+$newsview = $rootdata.'news/';
+$newsviewthumbnail = $rootdata.'news/thumbnail/';
+
+
+
+$mysql_news_categories_table = "news_categories";
+$mysql_news_header_table = "news_header";
+$mysql_news_detail_table = "news_detail";
+
+?>
+
+
+

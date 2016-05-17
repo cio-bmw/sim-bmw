@@ -1,0 +1,3 @@
+--2014-06-17 20:53:49--  http://code.jquery.com/ui/1.10.3/jquery-ui.js
+Resolving code.jquery.com (code.jquery.com)... failed: Name or service not known.
+wget: unable to resolve host address `code.jquery.com'
